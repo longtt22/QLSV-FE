@@ -1,5 +1,5 @@
 import HttpClient from "./index";
-import {SERVER_API_URL} from "../../../../QLSV_FE/src/commons/AppConfig";
+import {SERVER_API_URL} from "../../commons/AppConfig";
 
 class ApiService extends HttpClient {
     constructor() {

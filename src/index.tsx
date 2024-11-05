@@ -8,10 +8,13 @@ import NotFoundPage from "./components/pages/NotFoundPage";
 import AboutPage from "./components/pages/AboutPage";
 import MainGrid from "./components/MainGrid";
 import Student from "./modules/student/pages/Student";
+import {ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 ReactDOM.createRoot(document.querySelector("#root")!).render(
     <React.StrictMode>
         <StyledEngineProvider injectFirst>
+            <ToastContainer/>
             <Router>
                 <Routes>
                     <Route path="/" element={<Dashboard/>}>

@@ -12,6 +12,11 @@ export const findByStudentId = async (ID: number): Promise<StudentType> => {
 };
 
 export const createStudent = async (student: any): Promise<StudentType> => {
-    const res = await ApiService.post<StudentType>('/students/create', student);
+    const res = await ApiService.post<StudentType>('/students', student);
+    return res.data;
+};
+
+export const deleteStudent = async (ID: number): Promise<StudentType> => {
+    const res = await ApiService.delete<StudentType>('/students/delete/' + ID);
     return res.data;
 };

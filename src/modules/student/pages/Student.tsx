@@ -2,7 +2,7 @@ import {DataGrid, GridCloseIcon, GridColDef, GridRenderCellParams} from "@mui/x-
 import * as React from "react";
 import {ChangeEvent, useEffect, useState} from "react";
 import Box from "@mui/material/Box";
-import {createStudent, getAllStudent} from "../service";
+import {createStudent, deleteStudent, findByStudentId, getAllStudent} from "../service";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import {StudentType} from "../type";
@@ -13,20 +13,22 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 
-const initialStudent = {
+const initialStudent: StudentType = {
     id: null,
     fullName: '',
     code: '',
     email: '',
     phoneNumber: '',
     address: '',
+    createdAt: '',
+    createdBy: '',
+    updatedAt: '',
+    updatedBy: '',
 };
 
 export default function Student() {
     const [rows, setRows] = React.useState<StudentType[]>([]);
     const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
     const [student, setStudent] = useState(initialStudent);
     const [errors, setErrors] = useState<{
         fullName: boolean,
@@ -41,6 +43,14 @@ export default function Student() {
         phoneNumber: false,
         address: false,
     });
+
+    const handleOpen = () => {
+        setOpen(true);
+        setStudent(initialStudent)
+    }
+
+    const handleClose = () => setOpen(false);
+
     const getAllData = async () => {
         try {
             const [
@@ -66,6 +76,18 @@ export default function Student() {
             ...prevStudent,
             [name]: value,
         }));
+    };
+
+    const handleUpdateStudent = async (ID: number) => {
+        setOpen(true);
+        const data = await findByStudentId(ID);
+        setStudent(data);
+    };
+
+    const handleDeleteStudent = async (ID: number) => {
+        await deleteStudent(ID);
+        await getAllData();
+        toast.success("Delete Student successfully!");
     };
 
     const handleSubmit = async () => {
@@ -96,14 +118,125 @@ export default function Student() {
         }
         try {
             await createStudent(student);
-            toast.success("Create Student successfully!");
+            toast.success("Save Student successfully!");
             await getAllData();
             handleClose();
         } catch (error: any) {
             const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
-            toast.error("Create Student Error: " + errorMessage);
+            toast.error("Save Student Error: " + errorMessage);
         }
     };
+
+    const columns: GridColDef[] = [
+        {
+            field: 'id',
+            headerName: 'ID',
+            headerAlign: 'center',
+            align: 'center',
+            flex: 0.5,
+            minWidth: 50
+        },
+        {
+            field: 'fullName',
+            headerName: 'Full Name',
+            headerAlign: 'center',
+            align: 'center',
+            flex: 0.5,
+            minWidth: 100,
+        },
+        {
+            field: 'code',
+            headerName: 'Code',
+            headerAlign: 'center',
+            align: 'center',
+            flex: 1,
+            minWidth: 80,
+        },
+        {
+            field: 'email',
+            headerName: 'Email',
+            headerAlign: 'center',
+            align: 'center',
+            flex: 1,
+            minWidth: 80,
+        },
+        {
+            field: 'phoneNumber',
+            headerName: 'Phone Number',
+            headerAlign: 'center',
+            align: 'center',
+            flex: 1,
+            minWidth: 80,
+        },
+        {
+            field: 'address',
+            headerName: 'Address',
+            headerAlign: 'center',
+            align: 'center',
+            flex: 1,
+            minWidth: 80,
+        },
+        {
+            field: 'createdAt',
+            headerName: 'Created At',
+            headerAlign: 'center',
+            align: 'center',
+            flex: 1,
+            minWidth: 80,
+        },
+        {
+            field: 'createdBy',
+            headerName: 'Created By',
+            headerAlign: 'center',
+            align: 'center',
+            flex: 1,
+            minWidth: 80,
+        },
+        {
+            field: 'updatedAt',
+            headerName: 'Updated At',
+            headerAlign: 'center',
+            align: 'center',
+            flex: 1,
+            minWidth: 80,
+        },
+        {
+            field: 'updatedBy',
+            headerName: 'Updated By',
+            headerAlign: 'center',
+            align: 'center',
+            flex: 1,
+            minWidth: 80,
+        },
+        {
+            field: 'actions',
+            headerName: 'Actions',
+            width: 100,
+            headerAlign: 'center',
+            align: 'center',
+            sortable: false,
+            editable: false,
+
+            renderCell: (params: GridRenderCellParams) => (
+                <>
+                    <IconButton
+                        size={"small"}
+                        color="primary"
+                        onClick={() => handleUpdateStudent(params.row.id)}
+                    >
+                        <EditIcon/>
+                    </IconButton>
+                    <IconButton
+                        size={"small"}
+                        color="error"
+                        onClick={() => handleDeleteStudent(params.row.id)}
+                    >
+                        <DeleteIcon/>
+                    </IconButton>
+                </>
+            ),
+        },
+    ];
 
     return (
         <Box sx={{width: '100%', maxWidth: {sm: '100%', md: '1700px'}}}>
@@ -201,7 +334,6 @@ export default function Student() {
             </Modal>
             <DataGrid
                 autoHeight
-                checkboxSelection
                 rows={rows}
                 columns={columns}
                 getRowClassName={(params) =>
@@ -243,114 +375,3 @@ export default function Student() {
         </Box>
     );
 }
-
-const columns: GridColDef[] = [
-    {
-        field: 'id',
-        headerName: 'ID',
-        headerAlign: 'center',
-        align: 'center',
-        flex: 0.5,
-        minWidth: 50
-    },
-    {
-        field: 'fullName',
-        headerName: 'Full Name',
-        headerAlign: 'center',
-        align: 'center',
-        flex: 0.5,
-        minWidth: 100,
-    },
-    {
-        field: 'code',
-        headerName: 'Code',
-        headerAlign: 'center',
-        align: 'center',
-        flex: 1,
-        minWidth: 80,
-    },
-    {
-        field: 'email',
-        headerName: 'Email',
-        headerAlign: 'center',
-        align: 'center',
-        flex: 1,
-        minWidth: 80,
-    },
-    {
-        field: 'phoneNumber',
-        headerName: 'Phone Number',
-        headerAlign: 'center',
-        align: 'center',
-        flex: 1,
-        minWidth: 80,
-    },
-    {
-        field: 'address',
-        headerName: 'Address',
-        headerAlign: 'center',
-        align: 'center',
-        flex: 1,
-        minWidth: 80,
-    },
-    {
-        field: 'createdAt',
-        headerName: 'Created At',
-        headerAlign: 'center',
-        align: 'center',
-        flex: 1,
-        minWidth: 80,
-    },
-    {
-        field: 'createdBy',
-        headerName: 'Created By',
-        headerAlign: 'center',
-        align: 'center',
-        flex: 1,
-        minWidth: 80,
-    },
-    {
-        field: 'updatedAt',
-        headerName: 'Updated At',
-        headerAlign: 'center',
-        align: 'center',
-        flex: 1,
-        minWidth: 80,
-    },
-    {
-        field: 'updatedBy',
-        headerName: 'Updated By',
-        headerAlign: 'center',
-        align: 'center',
-        flex: 1,
-        minWidth: 80,
-    },
-    {
-        field: 'actions',
-        headerName: 'Actions',
-        width: 100,
-        headerAlign: 'center',
-        align: 'center',
-        sortable: false,
-        editable: false,
-
-        renderCell: (params: GridRenderCellParams) => (
-            <>
-                <IconButton
-                    size={"small"}
-                    color="primary"
-                    onClick={() => console.log(params.row.id)}
-                >
-                    <EditIcon/>
-                </IconButton>
-                <IconButton
-                    size={"small"}
-                    color="error"
-                    onClick={() => console.log(params.row.id)}
-                >
-                    <DeleteIcon/>
-                </IconButton>
-            </>
-        ),
-    },
-];

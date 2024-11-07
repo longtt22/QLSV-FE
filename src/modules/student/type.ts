@@ -1,7 +1,5 @@
-import {GridColDef} from "@mui/x-data-grid";
-
 export interface StudentType {
-    id: number,
+    id: number | null,
     fullName: String,
     code: String,
     email: String,

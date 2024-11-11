@@ -19,9 +19,12 @@ import {SitemarkIcon} from './CustomIcons';
 import AppTheme from '../../../theme/AppTheme';
 import ColorModeSelect from '../../../theme/ColorModeSelect';
 import {loginByUsernameAndPassword} from "../service/authService";
-import {tokenResponse} from "../type";
 import {toast} from "react-toastify";
-import ApiService from "../../../core/http/ApiService";
+import {TOKEN_DATA} from "../../../commons/constants";
+import {useDispatch} from 'react-redux';
+import {AppDispatch} from '../../../redux/store'; // Đảm bảo import đúng
+import {useNavigate} from 'react-router-dom';
+import {setAuthData} from '../../../redux/slice/authSlice'; // Action để cập nhật Redux state
 
 const Card = styled(MuiCard)(({theme}) => ({
     display: 'flex',
@@ -64,22 +67,16 @@ const SignInContainer = styled(Stack)(({theme}) => ({
         }),
     },
 }));
-const initialToken: tokenResponse = {
-    username: '',
-    authorities: [''],
-    refreshToken: '',
-    token: ''
-};
 
 export default function SignIn(props: { disableCustomTheme?: boolean }) {
     const [usernameError, setUsernameError] = React.useState(false);
-    const [token, setToken] = React.useState(initialToken);
     const [usernameErrorMessage, setUsernameErrorMessage] = React.useState('');
     const [passwordError, setPasswordError] = React.useState(false);
     const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
     const [open, setOpen] = React.useState(false);
     const [showPassword, setShowPassword] = React.useState(false);
-
+    const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -100,11 +97,17 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         }
         const data = new FormData(event.currentTarget);
         try {
+            localStorage.removeItem(TOKEN_DATA)
             const response = await loginByUsernameAndPassword(data);
-            setToken(response);
-            ApiService.setTokenData(token);
+            localStorage.setItem(TOKEN_DATA, JSON.stringify(response));
+            dispatch(setAuthData({
+                isAuthenticated: true,
+                token: response.token,
+                roles: response.authorities || []
+            }));
+
+            navigate("/")
             toast.success('Login success!');
-            window.location.href = '/';
         } catch (error: any) {
             toast.error(error.response?.data?.message || 'Login failed. Please try again.');
         }

@@ -8,25 +8,42 @@ import MainGrid from './components/MainGrid';
 import Student from './modules/student/pages/Student';
 import {ToastContainer} from 'react-toastify';
 import {StyledEngineProvider} from "@mui/material/styles";
+import LoadingIndicator from './components/LoadingIndicator';
+import {Provider} from 'react-redux';
+import {store} from './redux/store';
+import PrivateRoute from "./router/PrivateRoute";
+import Profile from "./modules/profile/pages/Profile";
 
 const App: React.FC = () => {
     return (
-        <div>
+        <Provider store={store}>
             <StyledEngineProvider injectFirst>
-                <ToastContainer/>
                 <Router>
                     <Routes>
-                        <Route path="/" element={<Dashboard/>}>
-                            <Route index element={<MainGrid/>}/>
-                            <Route path="about" element={<AboutPage/>}/>
-                            <Route path="student" element={<Student/>}/>
+                        <Route path="/" element={<Dashboard />}>
+                            <Route index element={<AboutPage />} />
+
+                            <Route element={<PrivateRoute allowedRoles={['ADMIN']} />}>
+                                <Route path="statistics" element={<MainGrid />} />
+                            </Route>
+
+                            <Route element={<PrivateRoute allowedRoles={['STAFF', 'ADMIN']} />}>
+                                <Route path="student" element={<Student/>}/>
+                            </Route>
+
+                            <Route element={<PrivateRoute allowedRoles={['STUDENT', 'STAFF', 'ADMIN']} />}>
+                                <Route path="employe" element={<Student />} />
+                                <Route path="profile" element={<Profile />} />
+                            </Route>
                         </Route>
-                        <Route path="login" element={<SignIn/>}/>
-                        <Route path="*" element={<NotFoundPage/>}/>
+                        <Route path="login" element={<SignIn />} />
+                        <Route path="*" element={<NotFoundPage />} />
                     </Routes>
                 </Router>
+                <ToastContainer/>
+                <LoadingIndicator/>
             </StyledEngineProvider>
-        </div>
+        </Provider>
     );
 };
 

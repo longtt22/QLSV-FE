@@ -1,4 +1,4 @@
-import ApiService from "../../../core/http/ApiService";
+import ApiService from "../../../core/http/ApiServiceFactory";
 import {tokenResponse} from "../type";
 
 export const loginByUsernameAndPassword = async (data: any): Promise<tokenResponse> => {

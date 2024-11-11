@@ -1,4 +1,4 @@
-import ApiService from "../../../core/http/ApiService";
+import ApiService from "../../../core/http/ApiServiceFactory";
 import {StudentType} from "../type";
 
 export const getAllStudent = async (): Promise<StudentType[]> => {

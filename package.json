@@ -11,6 +11,7 @@
     "@mui/x-date-pickers-pro": "latest",
     "@mui/x-tree-view": "latest",
     "@react-spring/web": "latest",
+    "@reduxjs/toolkit": "^2.3.0",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "axios": "^1.7.2",

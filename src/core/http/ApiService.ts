@@ -1,11 +1,16 @@
-import HttpClient, {RESPONSE_CODE} from "./index";
-import {SERVER_API_URL} from "../../commons/AppConfig";
-import {tokenResponse} from "../../modules/login/type";
-import {toast} from "react-toastify";
+import HttpClient, {RESPONSE_CODE} from './index';
+import {SERVER_API_URL} from '../../commons/AppConfig';
+import {tokenResponse} from '../../modules/login/type';
+import {toast} from 'react-toastify';
+import {AppDispatch} from '../../redux/store';
+import {setLoading} from '../../redux/slice/loadingSlice';
 
 class ApiService extends HttpClient {
-    constructor() {
+    private dispatch: AppDispatch;
+
+    constructor(dispatch: AppDispatch) {
         super(SERVER_API_URL || '');
+        this.dispatch = dispatch;
         this.setupInterceptors();
     }
 
@@ -16,22 +21,22 @@ class ApiService extends HttpClient {
                 if (tokenData?.token) {
                     config.headers['Authorization'] = `Bearer ${tokenData.token}`;
                 }
-                this.showLoading(true);
+                this.dispatch(setLoading(true));
                 return config;
             },
             (error) => {
-                this.showLoading(false);
+                this.dispatch(setLoading(false));
                 return Promise.reject(error);
             }
         );
 
         this.instance.interceptors.response.use(
             (response) => {
-                this.showLoading(false);
+                this.dispatch(setLoading(false));
                 return response;
             },
             (error) => {
-                this.showLoading(false);
+                this.dispatch(setLoading(false));
                 if (error.response?.status === RESPONSE_CODE.TOKEN_EXPIRED) {
                     toast.error('Session expired. Please log in again.');
                     localStorage.removeItem('tokenData');
@@ -42,22 +47,10 @@ class ApiService extends HttpClient {
         );
     }
 
-    public setTokenData(tokenData: tokenResponse) {
-        localStorage.setItem('tokenData', JSON.stringify(tokenData));
-    }
-
     public getTokenData(): tokenResponse | null {
         const data = localStorage.getItem('tokenData');
         return data ? JSON.parse(data) : null;
     }
-
-    public clearTokenData() {
-        localStorage.removeItem('tokenData');
-    }
-
-    private showLoading(isLoading: boolean) {
-        console.log(isLoading);
-    }
 }
 
-export default new ApiService();
+export default ApiService;

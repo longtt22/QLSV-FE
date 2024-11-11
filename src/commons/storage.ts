@@ -1,4 +1,5 @@
-import {ACCESS_TOKEN_KEY, REFRESH_ACCESS_TOKEN_KEY, USERNAME} from './constants';
+import {TOKEN_DATA} from './constants';
+import {tokenResponse} from "../modules/login/type";
 
 const Storage = {
     setCookie(name: string, value: string, seconds?: number) {
@@ -23,6 +24,12 @@ const Storage = {
     eraseCookie(name: string) {
         document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     },
+
+    getTokenData(): tokenResponse | null {
+        const data = localStorage.getItem(TOKEN_DATA);
+        return data ? JSON.parse(data) : null;
+    },
+
     get(key: string, defaultValue: string = '') {
         const value = localStorage.getItem(key);
 
@@ -35,35 +42,6 @@ const Storage = {
 
     remove(key: string) {
         localStorage.removeItem(key);
-    },
-
-    getAccessToken(): string {
-        return this.getCookie(ACCESS_TOKEN_KEY);
-    },
-
-    setAccessToken(token: string, seconds?: number) {
-        this.setCookie(ACCESS_TOKEN_KEY, token, seconds);
-    },
-
-    setRefreshToken(token: string, seconds?: number) {
-        this.setCookie(REFRESH_ACCESS_TOKEN_KEY, token, seconds);
-    },
-
-    getRefreshToken(): string {
-        return this.getCookie(REFRESH_ACCESS_TOKEN_KEY);
-    },
-
-    setUserNameAccount(userName: string) {
-        this.set(USERNAME, userName);
-    },
-
-    getUserNameAccount(): string {
-        return this.get(USERNAME);
-    },
-
-    removeToken() {
-        this.eraseCookie(ACCESS_TOKEN_KEY);
-        this.remove(USERNAME);
     },
 };
 

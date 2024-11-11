@@ -2,7 +2,7 @@ export const ACCESS_TOKEN_KEY = `admin:access_token`;
 export const REFRESH_ACCESS_TOKEN_KEY = `admin:refresh_token`;
 export const USERNAME = 'username';
 
-export const userTypeSignUp = 'owner';
+export const TOKEN_DATA = 'tokenData';
 
 export const RegValidPass = '(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[~@#$!%^*?&()])[A-Za-z\\d@$!%*?&]';
 // eslint-disable-next-line no-useless-escape

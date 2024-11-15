@@ -2,10 +2,10 @@ import {DataGrid, GridCloseIcon, GridColDef, GridRenderCellParams} from "@mui/x-
 import * as React from "react";
 import {ChangeEvent, useEffect, useState} from "react";
 import Box from "@mui/material/Box";
-import {createStudent, deleteStudent, findByStudentId, getAllStudent} from "../service";
+import {createType, deleteType, findByTypeId, getAllType} from "../service";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import {StudentType} from "../type";
+import {ApplicationType} from "../type";
 import {toast} from "react-toastify";
 import IconButton from "@mui/material/IconButton";
 import {Modal} from "@mui/material";
@@ -13,40 +13,31 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 
-const initialStudent: StudentType = {
+const initialType: ApplicationType = {
     id: null,
-    fullName: null,
-    code: null,
-    email: null,
-    phoneNumber: null,
-    address: null,
+    name: '',
+    description: '',
     createdAt: null,
     createdBy: null,
     updatedAt: null,
     updatedBy: null,
 };
 
-export default function Student() {
-    const [rows, setRows] = React.useState<StudentType[]>([]);
+export default function TypeApplication() {
+    const [rows, setRows] = React.useState<ApplicationType[]>([]);
     const [open, setOpen] = React.useState(false);
-    const [student, setStudent] = useState(initialStudent);
+    const [applicationType, setApplicationType] = useState(initialType);
     const [errors, setErrors] = useState<{
-        fullName: boolean,
-        code: boolean,
-        email: boolean;
-        phoneNumber: boolean,
-        address: boolean,
+        name: boolean,
+        description: boolean,
     }>({
-        fullName: false,
-        code: false,
-        email: false,
-        phoneNumber: false,
-        address: false,
+        name: false,
+        description: false
     });
 
     const handleOpen = () => {
         setOpen(true);
-        setStudent(initialStudent)
+        setApplicationType(initialType)
     }
 
     const handleClose = () => setOpen(false);
@@ -56,75 +47,62 @@ export default function Student() {
             const [
                 rows
             ] = await Promise.all([
-                getAllStudent(),
+                getAllType(),
             ]);
             setRows(rows || []);
-            console.log("Student Data", rows);
+            console.log("Application type Data", rows);
         } catch (error) {
             console.log("error", error);
         }
     };
 
     useEffect(() => {
-        getAllData();
+        getAllData().then(r => console.log(r));
     }, []);
 
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const {name, value} = e.target;
-        setStudent((prevStudent) => ({
-            ...prevStudent,
+        setApplicationType((prev) => ({
+            ...prev,
             [name]: value,
         }));
     };
 
-    const handleUpdateStudent = async (ID: number) => {
+    const handleUpdate = async (ID: number) => {
         setOpen(true);
-        const data = await findByStudentId(ID);
-        setStudent(data);
+        const data = await findByTypeId(ID);
+        setApplicationType(data);
     };
 
-    const handleDeleteStudent = async (ID: number) => {
-        await deleteStudent(ID);
+    const handleDelete = async (ID: number) => {
+        await deleteType(ID);
         await getAllData();
-        toast.success("Delete Student successfully!");
+        toast.success("Delete application type successfully!");
     };
 
     const handleSubmit = async () => {
-        console.log(student);
+        console.log(applicationType);
 
-        const isFullNameValid = null != student.fullName && !!student.fullName.trim();
-        const isCodeValid = null != student.code && !!student.code.trim();
-        const isEmailValid = null != student.email && !!student.email.trim();
-        const isPhoneNumberValid = null != student.phoneNumber && !!student.phoneNumber.trim();
-        const isAddressValid = null != student.address && !!student.address.trim();
+        const isNameValid = null != applicationType.name && !!applicationType.name.trim();
+        const isDescriptionValid = null != applicationType.description && !!applicationType.description.trim();
 
-        if (
-            !isEmailValid ||
-            !isPhoneNumberValid ||
-            !isFullNameValid ||
-            !isCodeValid ||
-            !isAddressValid
-        ) {
+        if (!isNameValid || !isDescriptionValid) {
             setErrors({
-                fullName: !isFullNameValid,
-                code: !isCodeValid,
-                email: !isEmailValid,
-                phoneNumber: !isPhoneNumberValid,
-                address: !isAddressValid,
+                name: !isNameValid,
+                description: !isDescriptionValid
             });
 
             return; // Dừng lại nếu có lỗi
         }
         try {
-            student.createdBy
-            await createStudent(student);
-            toast.success("Save Student successfully!");
+            await createType(applicationType);
+            toast.success("Save application type successfully!");
             await getAllData();
             handleClose();
         } catch (error: any) {
             const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
-            toast.error("Save Student Error: " + errorMessage);
+            toast.error("Save application type Error: " + errorMessage);
         }
     };
 
@@ -138,44 +116,20 @@ export default function Student() {
             minWidth: 50
         },
         {
-            field: 'fullName',
-            headerName: 'Full Name',
+            field: 'name',
+            headerName: 'Name',
             headerAlign: 'center',
             align: 'center',
             flex: 0.5,
             minWidth: 100,
         },
         {
-            field: 'code',
-            headerName: 'Code',
+            field: 'description',
+            headerName: 'Description',
             headerAlign: 'center',
             align: 'center',
             flex: 1,
-            minWidth: 80,
-        },
-        {
-            field: 'email',
-            headerName: 'Email',
-            headerAlign: 'center',
-            align: 'center',
-            flex: 1,
-            minWidth: 80,
-        },
-        {
-            field: 'phoneNumber',
-            headerName: 'Phone Number',
-            headerAlign: 'center',
-            align: 'center',
-            flex: 1,
-            minWidth: 80,
-        },
-        {
-            field: 'address',
-            headerName: 'Address',
-            headerAlign: 'center',
-            align: 'center',
-            flex: 1,
-            minWidth: 80,
+            minWidth: 100,
         },
         {
             field: 'createdAt',
@@ -223,14 +177,14 @@ export default function Student() {
                     <IconButton
                         size={"small"}
                         color="primary"
-                        onClick={() => handleUpdateStudent(params.row.id)}
+                        onClick={() => handleUpdate(params.row.id)}
                     >
                         <EditIcon/>
                     </IconButton>
                     <IconButton
                         size={"small"}
                         color="error"
-                        onClick={() => handleDeleteStudent(params.row.id)}
+                        onClick={() => handleDelete(params.row.id)}
                     >
                         <DeleteIcon/>
                     </IconButton>
@@ -241,7 +195,7 @@ export default function Student() {
 
     return (
         <Box sx={{width: '100%', maxWidth: {sm: '100%', md: '1700px'}}}>
-            <Button onClick={handleOpen} sx={{mb: 2}}>Create Student</Button>
+            <Button onClick={handleOpen} sx={{mb: 2}}>Create application type</Button>
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -277,57 +231,28 @@ export default function Student() {
                         <GridCloseIcon/>
                     </IconButton>
 
-                    <Typography id="student-form-title" variant="h6" component="h2" gutterBottom>
-                        {student.id ? 'Update student' : 'Create student'}
+                    <Typography id="application-type-form-title" variant="h6" component="h2" gutterBottom>
+                        {applicationType.id ? 'Update application type' : 'Create application type'}
                     </Typography>
 
                     <TextField
-                        label="fullName"
-                        name="fullName"
+                        label="name"
+                        name="name"
                         fullWidth
                         margin="normal"
-                        value={student.fullName}
-                        error={errors.fullName}
+                        value={applicationType.name}
+                        error={errors.name}
                         onChange={handleChange}
                     />
                     <TextField
-                        label="Student code"
-                        name="code"
+                        label="Description"
+                        name="description"
                         fullWidth
                         margin="normal"
-                        value={student.code}
-                        error={errors.code}
+                        value={applicationType.description}
+                        error={errors.description}
                         onChange={handleChange}
                     />
-                    <TextField
-                        label="Email"
-                        name="email"
-                        type="email"
-                        fullWidth
-                        margin="normal"
-                        value={student.email}
-                        error={errors.email}
-                        onChange={handleChange}
-                    />
-                    <TextField
-                        label="Phone number"
-                        name="phoneNumber"
-                        fullWidth
-                        margin="normal"
-                        value={student.phoneNumber}
-                        error={errors.phoneNumber}
-                        onChange={handleChange}
-                    />
-                    <TextField
-                        label="Address"
-                        name="address"
-                        fullWidth
-                        margin="normal"
-                        value={student.address}
-                        error={errors.address}
-                        onChange={handleChange}
-                    />
-
                     <Button variant="contained" color="primary" fullWidth sx={{mt: 2}} onClick={handleSubmit}>
                         Submit
                     </Button>

@@ -13,6 +13,7 @@ import {Provider} from 'react-redux';
 import {store} from './redux/store';
 import PrivateRoute from "./router/PrivateRoute";
 import Profile from "./modules/profile/pages/Profile";
+import TypeApplication from "./modules/application-type/pages/ApplicationType";
 
 const App: React.FC = () => {
     return (
@@ -29,6 +30,7 @@ const App: React.FC = () => {
 
                             <Route element={<PrivateRoute allowedRoles={['STAFF', 'ADMIN']} />}>
                                 <Route path="student" element={<Student/>}/>
+                                <Route path="application-type" element={<TypeApplication/>}/>
                             </Route>
 
                             <Route element={<PrivateRoute allowedRoles={['STUDENT', 'STAFF', 'ADMIN']} />}>

@@ -1,8 +1,8 @@
-export interface ApplicationType {
-    userId: number | null,
+export interface EmployeeType {
+    id: number | null,
     fullName: String | null,
-    password: string | null,
-    code: String | null,
+    username: String | null,
+    password: String | null,
     email: String | null,
     phoneNumber: String | null,
     address: String | null,

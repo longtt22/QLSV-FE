@@ -16,7 +16,7 @@ export const createType = async (student: any): Promise<ApplicationType> => {
     return res.data;
 };
 
-export const deleteType = async (ID: number): Promise<ApplicationType> => {
-    const res = await ApiService.delete<ApplicationType>('/application-type/delete/' + ID);
+export const deleteType = async (ID: number): Promise<void> => {
+    const res = await ApiService.get<void>('/application-type/delete/' + ID);
     return res.data;
 };

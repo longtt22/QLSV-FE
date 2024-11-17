@@ -14,6 +14,7 @@ import {store} from './redux/store';
 import PrivateRoute from "./router/PrivateRoute";
 import Profile from "./modules/profile/pages/Profile";
 import TypeApplication from "./modules/application-type/pages/ApplicationType";
+import Employee from "./modules/employee/pages/Employee";
 
 const App: React.FC = () => {
     return (
@@ -21,25 +22,25 @@ const App: React.FC = () => {
             <StyledEngineProvider injectFirst>
                 <Router>
                     <Routes>
-                        <Route path="/" element={<Dashboard />}>
-                            <Route index element={<AboutPage />} />
+                        <Route path="/" element={<Dashboard/>}>
+                            <Route index element={<AboutPage/>}/>
 
-                            <Route element={<PrivateRoute allowedRoles={['ADMIN']} />}>
-                                <Route path="statistics" element={<MainGrid />} />
+                            <Route element={<PrivateRoute allowedRoles={['ADMIN']}/>}>
+                                <Route path="statistics" element={<MainGrid/>}/>
                             </Route>
 
-                            <Route element={<PrivateRoute allowedRoles={['STAFF', 'ADMIN']} />}>
+                            <Route element={<PrivateRoute allowedRoles={['STAFF', 'ADMIN']}/>}>
                                 <Route path="student" element={<Student/>}/>
+                                <Route path="employee" element={<Employee/>}/>
                                 <Route path="application-type" element={<TypeApplication/>}/>
                             </Route>
 
-                            <Route element={<PrivateRoute allowedRoles={['STUDENT', 'STAFF', 'ADMIN']} />}>
-                                <Route path="employe" element={<Student />} />
-                                <Route path="profile" element={<Profile />} />
+                            <Route element={<PrivateRoute allowedRoles={['STUDENT', 'STAFF', 'ADMIN']}/>}>
+                                <Route path="profile" element={<Profile/>}/>
                             </Route>
                         </Route>
-                        <Route path="login" element={<SignIn />} />
-                        <Route path="*" element={<NotFoundPage />} />
+                        <Route path="login" element={<SignIn/>}/>
+                        <Route path="*" element={<NotFoundPage/>}/>
                     </Routes>
                 </Router>
                 <ToastContainer/>

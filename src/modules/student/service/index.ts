@@ -1,5 +1,6 @@
 import ApiService from "../../../core/http/ApiServiceFactory";
 import {StudentType} from "../type";
+import {SERVER_API_URL} from "../../../commons/AppConfig";
 
 export const getAllStudent = async (): Promise<StudentType[]> => {
     const res = await ApiService.get<StudentType[]>('/students/getAll');
@@ -16,7 +17,7 @@ export const createStudent = async (student: any): Promise<StudentType> => {
     return res.data;
 };
 
-export const deleteStudent = async (ID: number): Promise<StudentType> => {
-    const res = await ApiService.delete<StudentType>('/students/delete/' + ID);
+export const deleteStudent = async (ID: number): Promise<void> => {
+    const res = await ApiService.get<void>(SERVER_API_URL + 'students/delete/' + ID);
     return res.data;
 };

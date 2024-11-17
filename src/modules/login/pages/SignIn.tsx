@@ -128,9 +128,9 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             setUsernameErrorMessage('');
         }
 
-        if (!password.value || password.value.length < 8) {
+        if (!password.value) {
             setPasswordError(true);
-            setPasswordErrorMessage('Password must be at least 8 characters long.');
+            setPasswordErrorMessage('Password is required!');
             isValid = false;
         } else {
             setPasswordError(false);

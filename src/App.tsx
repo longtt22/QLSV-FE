@@ -15,6 +15,8 @@ import PrivateRoute from "./router/PrivateRoute";
 import Profile from "./modules/profile/pages/Profile";
 import TypeApplication from "./modules/application-type/pages/ApplicationType";
 import Employee from "./modules/employee/pages/Employee";
+import Application from "./modules/application/pages/Application";
+import {ADMIN, STAFF, STUDENT} from "./commons/constants";
 
 const App: React.FC = () => {
     return (
@@ -25,18 +27,19 @@ const App: React.FC = () => {
                         <Route path="/" element={<Dashboard/>}>
                             <Route index element={<AboutPage/>}/>
 
-                            <Route element={<PrivateRoute allowedRoles={['ADMIN']}/>}>
+                            <Route element={<PrivateRoute allowedRoles={[ADMIN]}/>}>
                                 <Route path="statistics" element={<MainGrid/>}/>
                             </Route>
 
-                            <Route element={<PrivateRoute allowedRoles={['STAFF', 'ADMIN']}/>}>
+                            <Route element={<PrivateRoute allowedRoles={[STAFF, ADMIN]}/>}>
                                 <Route path="student" element={<Student/>}/>
                                 <Route path="employee" element={<Employee/>}/>
                                 <Route path="application-type" element={<TypeApplication/>}/>
                             </Route>
 
-                            <Route element={<PrivateRoute allowedRoles={['STUDENT', 'STAFF', 'ADMIN']}/>}>
+                            <Route element={<PrivateRoute allowedRoles={[STUDENT, STAFF, ADMIN]}/>}>
                                 <Route path="profile" element={<Profile/>}/>
+                                <Route path="prescription" element={<Application/>}/>
                             </Route>
                         </Route>
                         <Route path="login" element={<SignIn/>}/>

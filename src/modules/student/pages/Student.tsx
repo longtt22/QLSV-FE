@@ -16,10 +16,12 @@ import TextField from "@mui/material/TextField";
 const initialStudent: StudentType = {
     id: null,
     fullName: null,
-    code: null,
+    username: null,
+    password: null,
     email: null,
     phoneNumber: null,
     address: null,
+    status: true,
     createdAt: null,
     createdBy: null,
     updatedAt: null,
@@ -32,13 +34,13 @@ export default function Student() {
     const [student, setStudent] = useState(initialStudent);
     const [errors, setErrors] = useState<{
         fullName: boolean,
-        code: boolean,
+        username: boolean,
         email: boolean;
         phoneNumber: boolean,
         address: boolean,
     }>({
         fullName: false,
-        code: false,
+        username: false,
         email: false,
         phoneNumber: false,
         address: false,
@@ -98,7 +100,7 @@ export default function Student() {
         console.log(student);
 
         const isFullNameValid = null != student.fullName && !!student.fullName.trim();
-        const isCodeValid = null != student.code && !!student.code.trim();
+        const isUsernameValid = null != student.username && !!student.username.trim();
         const isEmailValid = null != student.email && !!student.email.trim();
         const isPhoneNumberValid = null != student.phoneNumber && !!student.phoneNumber.trim();
         const isAddressValid = null != student.address && !!student.address.trim();
@@ -107,12 +109,12 @@ export default function Student() {
             !isEmailValid ||
             !isPhoneNumberValid ||
             !isFullNameValid ||
-            !isCodeValid ||
+            !isUsernameValid ||
             !isAddressValid
         ) {
             setErrors({
                 fullName: !isFullNameValid,
-                code: !isCodeValid,
+                username: !isUsernameValid,
                 email: !isEmailValid,
                 phoneNumber: !isPhoneNumberValid,
                 address: !isAddressValid,
@@ -121,11 +123,16 @@ export default function Student() {
             return; // Dừng lại nếu có lỗi
         }
         try {
-            student.createdBy
-            await createStudent(student);
-            toast.success("Save Student successfully!");
+            await createStudent(student)
+                .then(() => {
+                    toast.success("Save Student successfully!");
+                    handleClose();
+                })
+                .catch((error: any) => {
+                    const errorMessage = error.response?.data?.message || "An unknown error occurred";
+                    toast.error("Save Student Error: " + errorMessage);
+                });
             await getAllData();
-            handleClose();
         } catch (error: any) {
             const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
             toast.error("Save Student Error: " + errorMessage);
@@ -150,8 +157,8 @@ export default function Student() {
             minWidth: 100,
         },
         {
-            field: 'code',
-            headerName: 'Code',
+            field: 'username',
+            headerName: 'Username',
             headerAlign: 'center',
             align: 'center',
             flex: 1,
@@ -296,11 +303,19 @@ export default function Student() {
                     />
                     <TextField
                         label="Student code"
-                        name="code"
+                        name="username"
                         fullWidth
                         margin="normal"
-                        value={student.code}
-                        error={errors.code}
+                        value={student.username}
+                        error={errors.username}
+                        onChange={handleChange}
+                    />
+                    <TextField
+                        label="Password"
+                        name="password"
+                        fullWidth
+                        margin="normal"
+                        value={student.password}
                         onChange={handleChange}
                     />
                     <TextField

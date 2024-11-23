@@ -99,6 +99,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         try {
             localStorage.removeItem(TOKEN_DATA)
             const response = await loginByUsernameAndPassword(data);
+            response.isAuthenticated = true;
             localStorage.setItem(TOKEN_DATA, JSON.stringify(response));
             dispatch(setAuthData({
                 isAuthenticated: true,

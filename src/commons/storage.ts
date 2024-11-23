@@ -30,6 +30,12 @@ const Storage = {
         return data ? JSON.parse(data) : null;
     },
 
+    getTokenString(): String | null {
+        const data = localStorage.getItem(TOKEN_DATA);
+        const token: tokenResponse = data ? JSON.parse(data) : null;
+        return token.token;
+    },
+
     get(key: string, defaultValue: string = '') {
         const value = localStorage.getItem(key);
 

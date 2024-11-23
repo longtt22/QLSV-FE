@@ -123,7 +123,6 @@ export default function Employee() {
             return; // Dừng lại nếu có lỗi
         }
         try {
-            employee.createdBy
             await createEmployee(employee)
                 .then(() => {
                     toast.success("Save Employee successfully!");

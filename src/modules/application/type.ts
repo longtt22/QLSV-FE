@@ -2,8 +2,10 @@ export interface RequestType {
     id: number | null;
     requestType: String | null,
     description: String | null,
-    fileName: String | null,
-    filePath: String | null,
+    fileNameRequest: String | null,
+    filePathRequest: String | null,
+    fileNameResponse: String | null,
+    filePathResponse: String | null,
     fromDate: String | null,
     toDate: String | null,
     reason: String | null,

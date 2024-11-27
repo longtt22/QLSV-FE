@@ -16,9 +16,9 @@ export const formatDateTimeHHmm = 'DD/MM/YYYY HH:mm';
 export const formatTimeHHmm = 'HH:mm';
 export const formatLocalDateTime = 'YYYY-MM-DDTHH:mm:ss[Z]';
 
-export const ALL = "Tất cả";
-export const PENDING_APPROVAL = "Chờ xử lý";
-export const IN_PROGRESS = "Đang xử lý";
-export const APPROVED = "Đã phê duyệt";
-export const REJECT = "Đã hủy";
+export const ALL = "All";
+export const PENDING = "Pending";
+export const IN_PROGRESS = "In progress";
+export const APPROVED = "Approved";
+export const REJECT = "Reject";
 

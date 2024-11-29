@@ -16,3 +16,14 @@ export interface RequestType {
     updatedAt: String | null,
     updatedBy: String | null,
 }
+
+export type StatusProp = {
+    status: string;
+    totalRequests: any;
+    totalAllRequests: any;
+};
+
+export type handlerUserProp = {
+    handlerUser: string;
+    totalRequests: any;
+};

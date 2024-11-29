@@ -1,5 +1,5 @@
 import ApiService from "../../../core/http/ApiServiceFactory";
-import {RequestType} from "../type";
+import {handlerUserProp, RequestType, StatusProp} from "../type";
 import axios from "axios";
 import {SERVER_API_URL} from "../../../commons/AppConfig";
 import Storage from "../../../commons/storage";
@@ -59,6 +59,15 @@ export const rejectRequest = async (id: number, reason: string): Promise<void> =
 
 export const reception = async (id: number): Promise<void> => {
     const res = await ApiService.get<void>('/request/reception', {id: id});
+    return res.data;
+};
+
+export const countStatus = async (): Promise<StatusProp[]> => {
+    const res = await ApiService.get<StatusProp[]>('/request/count-status');
+    return res.data;
+};
+export const countHandlerUser = async (): Promise<handlerUserProp[]> => {
+    const res = await ApiService.get<handlerUserProp[]>('/request/count-handler-user');
     return res.data;
 };
 

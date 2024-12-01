@@ -72,8 +72,8 @@ const Profile: React.FC = () => {
                     }}
                 >
                     <Avatar
-                        alt="User Avatar"
-                        src="/static/images/avatar/7.jpg"
+                        alt={user.fullName}
+                        src="/static/images/avatar/default.jpg"
                         sx={{width: 120, height: 120, mb: 2, border: '4px solid #fff'}}
                     />
                     <Typography variant="h5" sx={{fontWeight: 600, color: '#333'}}>

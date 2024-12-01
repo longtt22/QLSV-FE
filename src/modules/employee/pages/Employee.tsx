@@ -2,10 +2,10 @@ import {DataGrid, GridCloseIcon, GridColDef, GridRenderCellParams} from "@mui/x-
 import * as React from "react";
 import {ChangeEvent, useEffect, useState} from "react";
 import Box from "@mui/material/Box";
-import {createStudent, deleteStudent, findByStudentId, getAllStudent} from "../service";
+import {createEmployee, deleteEmployee, findByEmployeeId, getAllEmployee} from "../service";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import {StudentType} from "../type";
+import {EmployeeType} from "../type";
 import {toast} from "react-toastify";
 import IconButton from "@mui/material/IconButton";
 import {Modal} from "@mui/material";
@@ -13,7 +13,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 
-const initialStudent: StudentType = {
+const initialEmployee: EmployeeType = {
     id: null,
     fullName: null,
     username: null,
@@ -28,19 +28,19 @@ const initialStudent: StudentType = {
     updatedBy: null,
 };
 
-export default function Student() {
-    const [rows, setRows] = React.useState<StudentType[]>([]);
+export default function Employee() {
+    const [rows, setRows] = React.useState<EmployeeType[]>([]);
     const [open, setOpen] = React.useState(false);
-    const [student, setStudent] = useState(initialStudent);
+    const [employee, setEmployee] = useState(initialEmployee);
     const [errors, setErrors] = useState<{
         fullName: boolean,
-        username: boolean,
+        code: boolean,
         email: boolean;
         phoneNumber: boolean,
         address: boolean,
     }>({
         fullName: false,
-        username: false,
+        code: false,
         email: false,
         phoneNumber: false,
         address: false,
@@ -48,7 +48,7 @@ export default function Student() {
 
     const handleOpen = () => {
         setOpen(true);
-        setStudent(initialStudent)
+        setEmployee(initialEmployee)
     }
 
     const handleClose = () => setOpen(false);
@@ -58,10 +58,10 @@ export default function Student() {
             const [
                 rows
             ] = await Promise.all([
-                getAllStudent(),
+                getAllEmployee(),
             ]);
             setRows(rows || []);
-            console.log("Student Data", rows);
+            console.log("Employee Data", rows);
         } catch (error) {
             console.log("error", error);
         }
@@ -74,47 +74,47 @@ export default function Student() {
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const {name, value} = e.target;
-        setStudent((prevStudent) => ({
-            ...prevStudent,
+        setEmployee((prevEmployee) => ({
+            ...prevEmployee,
             [name]: value,
         }));
     };
 
-    const handleUpdateStudent = async (ID: number) => {
+    const handleUpdateEmployee = async (ID: number) => {
         setOpen(true);
-        const data = await findByStudentId(ID);
-        setStudent(data);
+        const data = await findByEmployeeId(ID);
+        setEmployee(data);
     };
 
-    const handleDeleteStudent = async (ID: number) => {
+    const handleDeleteEmployee = async (ID: number) => {
         try {
-            await deleteStudent(ID);
+            await deleteEmployee(ID);
             await getAllData();
-            toast.success("Delete Student successfully!");
+            toast.success("Delete Employee successfully!");
         } catch (error) {
             console.log("error", error);
         }
     };
 
     const handleSubmit = async () => {
-        console.log(student);
+        console.log(employee);
 
-        const isFullNameValid = null != student.fullName && !!student.fullName.trim();
-        const isUsernameValid = null != student.username && !!student.username.trim();
-        const isEmailValid = null != student.email && !!student.email.trim();
-        const isPhoneNumberValid = null != student.phoneNumber && !!student.phoneNumber.trim();
-        const isAddressValid = null != student.address && !!student.address.trim();
+        const isFullNameValid = null != employee.fullName && !!employee.fullName.trim();
+        const isCodeValid = null != employee.username && !!employee.username.trim();
+        const isEmailValid = null != employee.email && !!employee.email.trim();
+        const isPhoneNumberValid = null != employee.phoneNumber && !!employee.phoneNumber.trim();
+        const isAddressValid = null != employee.address && !!employee.address.trim();
 
         if (
             !isEmailValid ||
             !isPhoneNumberValid ||
             !isFullNameValid ||
-            !isUsernameValid ||
+            !isCodeValid ||
             !isAddressValid
         ) {
             setErrors({
                 fullName: !isFullNameValid,
-                username: !isUsernameValid,
+                code: !isCodeValid,
                 email: !isEmailValid,
                 phoneNumber: !isPhoneNumberValid,
                 address: !isAddressValid,
@@ -123,19 +123,19 @@ export default function Student() {
             return; // Dừng lại nếu có lỗi
         }
         try {
-            await createStudent(student)
+            await createEmployee(employee)
                 .then(() => {
-                    toast.success("Save Student successfully!");
+                    toast.success("Save Employee successfully!");
                     handleClose();
                 })
                 .catch((error: any) => {
                     const errorMessage = error.response?.data?.message || "An unknown error occurred";
-                    toast.error("Save Student Error: " + errorMessage);
+                    toast.error("Save Employee Error: " + errorMessage);
                 });
             await getAllData();
         } catch (error: any) {
             const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
-            toast.error("Save Student Error: " + errorMessage);
+            toast.error("Save Employee Error: " + errorMessage);
         }
     };
 
@@ -234,14 +234,14 @@ export default function Student() {
                     <IconButton
                         size={"small"}
                         color="primary"
-                        onClick={() => handleUpdateStudent(params.row.id)}
+                        onClick={() => handleUpdateEmployee(params.row.id)}
                     >
                         <EditIcon/>
                     </IconButton>
                     <IconButton
                         size={"small"}
                         color="error"
-                        onClick={() => handleDeleteStudent(params.row.id)}
+                        onClick={() => handleDeleteEmployee(params.row.id)}
                     >
                         <DeleteIcon/>
                     </IconButton>
@@ -252,7 +252,7 @@ export default function Student() {
 
     return (
         <Box sx={{width: '100%', maxWidth: {sm: '100%', md: '1700px'}}}>
-            <Button onClick={handleOpen} sx={{mb: 2}}>Create Student</Button>
+            <Button onClick={handleOpen} sx={{mb: 2}}>Create Employee</Button>
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -288,8 +288,8 @@ export default function Student() {
                         <GridCloseIcon/>
                     </IconButton>
 
-                    <Typography id="student-form-title" variant="h6" component="h2" gutterBottom>
-                        {student.id ? 'Update student' : 'Create student'}
+                    <Typography id="employee-form-title" variant="h6" component="h2" gutterBottom>
+                        {employee.id ? 'Update employee' : 'Create employee'}
                     </Typography>
 
                     <TextField
@@ -297,17 +297,18 @@ export default function Student() {
                         name="fullName"
                         fullWidth
                         margin="normal"
-                        value={student.fullName}
+                        value={employee.fullName}
                         error={errors.fullName}
                         onChange={handleChange}
                     />
                     <TextField
-                        label="Student code"
+                        label="Username"
                         name="username"
                         fullWidth
                         margin="normal"
-                        value={student.username}
-                        error={errors.username}
+                        disabled={employee.id != null}
+                        value={employee.username}
+                        error={errors.code}
                         onChange={handleChange}
                     />
                     <TextField
@@ -315,7 +316,8 @@ export default function Student() {
                         name="password"
                         fullWidth
                         margin="normal"
-                        value={student.password}
+                        value={employee.password}
+                        error={errors.code}
                         onChange={handleChange}
                     />
                     <TextField
@@ -324,7 +326,7 @@ export default function Student() {
                         type="email"
                         fullWidth
                         margin="normal"
-                        value={student.email}
+                        value={employee.email}
                         error={errors.email}
                         onChange={handleChange}
                     />
@@ -333,7 +335,7 @@ export default function Student() {
                         name="phoneNumber"
                         fullWidth
                         margin="normal"
-                        value={student.phoneNumber}
+                        value={employee.phoneNumber}
                         error={errors.phoneNumber}
                         onChange={handleChange}
                     />
@@ -342,7 +344,7 @@ export default function Student() {
                         name="address"
                         fullWidth
                         margin="normal"
-                        value={student.address}
+                        value={employee.address}
                         error={errors.address}
                         onChange={handleChange}
                     />

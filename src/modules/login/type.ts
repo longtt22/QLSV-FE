@@ -1,6 +1,7 @@
 export interface tokenResponse {
-    username: String,
-    authorities: [String],
-    refreshToken: String,
-    token: String
+    username: string,
+    authorities: [string],
+    refreshToken: string,
+    token: string,
+    isAuthenticated: boolean
 }

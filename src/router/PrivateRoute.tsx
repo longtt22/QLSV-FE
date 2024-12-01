@@ -1,18 +1,16 @@
 import React from 'react';
 import {Navigate, Outlet} from 'react-router-dom';
-import {useSelector} from 'react-redux';
-import {RootState} from '../redux/store';
+import storage from "../commons/storage";
 
 interface PrivateRouteProps {
     allowedRoles: string[];
 }
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({allowedRoles}) => {
-    const {isAuthenticated, roles} = useSelector((state: RootState) => state.auth);
+    const user = storage.getTokenData();
+    const hasAccess = user?.isAuthenticated && user.authorities.some(role => allowedRoles.includes(role as string));
 
-    const hasAccess = isAuthenticated && roles.some(role => allowedRoles.includes(role));
-
-    return hasAccess ? <Outlet/> : <Navigate to = "/login" />;
+    return hasAccess ? <Outlet/> : <Navigate to="/login"/>;
 };
 
 export default PrivateRoute;

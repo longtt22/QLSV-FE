@@ -22,6 +22,7 @@ class ApiService extends HttpClient {
                     config.headers['Authorization'] = `Bearer ${tokenData.token}`;
                 }
                 this.dispatch(setLoading(true));
+                console.log('Request Headers:', config.headers);
                 return config;
             },
             (error) => {

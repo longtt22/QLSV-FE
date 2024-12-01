@@ -1,4 +1,4 @@
-export interface StudentType {
+export interface EmployeeType {
     id: number | null,
     fullName: String | null,
     username: String | null,
